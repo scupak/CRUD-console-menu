@@ -24,5 +24,10 @@ namespace CRUD_menu
             Genre = genre;
 
         }
+
+        public override string ToString()
+        {
+            return ($"{Id}:{Title}:{ReleaseDate}:{Storyline}: {Genre}");
+        }
     }
 }
