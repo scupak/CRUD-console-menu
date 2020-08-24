@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 
-namespace CRUD_menu
+namespace CRUD_menu_models
 {
-    class Video
+    public class Video
     {
-        private static int _globalId;
-        public int Id { get; }
+        public int Id { get; set; }
         public string Title { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string Storyline { get; set; }
@@ -16,8 +12,6 @@ namespace CRUD_menu
 
         public Video(string title, DateTime releaseDate, string storyline , string genre)
         {
-            _globalId++;
-            Id = _globalId;
             Title = title;
             ReleaseDate = releaseDate;
             Storyline = storyline;
