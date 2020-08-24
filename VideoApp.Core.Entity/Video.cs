@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CRUD_menu_models
+namespace VideoApp.Core.Entity
 {
     public class Video
     {

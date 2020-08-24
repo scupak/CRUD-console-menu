@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using CRUD_menu_models;
-using CRUD_menu_BLL;
+using VideoApp.core;
+using VideoApp.Core.Entity;
 
-namespace CRUD_menu
+namespace VideoApp.UI
 {
     class Program
     {
