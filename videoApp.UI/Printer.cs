@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 using VideoApp.core;
 using VideoApp.core.ApplicationServices;
@@ -9,7 +10,8 @@ namespace VideoApp.UI
 {
   public  class Printer
   {
-      private IVideoService _videoService;
+         private IVideoService _videoService;
+         private Video editedVideo; 
         public Printer(IVideoService videoService)
         {
             _videoService = videoService;
@@ -38,6 +40,7 @@ namespace VideoApp.UI
 
 
                 selection = ShowMenu(menuItems);
+                int idSelection;
                 Console.ReadLine();
 
                 switch (selection)
@@ -55,10 +58,11 @@ namespace VideoApp.UI
                         Console.ReadLine();
                         break;
                     case 2:
+
                         Console.WriteLine("show single video by id");
                         Console.Write("write id of the video you want:");
 
-                        while (!int.TryParse(Console.ReadLine(), out selection))
+                        while (!int.TryParse(Console.ReadLine(), out idSelection))
                         {
                             Console.WriteLine("You need to select an id");
 
@@ -67,15 +71,18 @@ namespace VideoApp.UI
 
                         // int showid = selection;
 
-                        if (_videoService.GetVideos().Find(x => x.Id == selection) == null)
+                        if (_videoService.GetVideoById(idSelection) == null)
                         {
                             Console.WriteLine("could not find video");
                             Console.ReadLine();
                         }
+                        else
+                        {
 
-                        Console.WriteLine(_videoService.GetVideos().Find(x => x.Id == selection));
-                        Console.ReadLine();
 
+                            Console.WriteLine(_videoService.GetVideoById(idSelection));
+                            Console.ReadLine();
+                        }
 
 
                         break;
@@ -84,20 +91,16 @@ namespace VideoApp.UI
                         Console.WriteLine("Add video");
                         Console.WriteLine("Enter title");
                         string title = Console.ReadLine();
+                        DateTime date;
 
-                        Console.WriteLine("Enter release date");
-                        Console.ReadLine();
-                        Console.WriteLine("Enter year");
-                        int year = int.Parse(Console.ReadLine());
-                        Console.ReadLine();
-                        Console.WriteLine("Enter month");
-                        int month = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter release date, day/month/year");
+                        while (!DateTime.TryParse(Console.ReadLine(), out date))
+                        {
+                            Console.WriteLine("You need to select a valid date");
 
-                        Console.ReadLine();
-                        Console.WriteLine("Enter day");
-                        int day = int.Parse(Console.ReadLine());
+                        }
 
-                        DateTime date = new DateTime(year, month, day);
+                      
 
                         Console.ReadLine();
                         Console.WriteLine("Enter storyline");
@@ -114,30 +117,217 @@ namespace VideoApp.UI
                     case 4:
                         // TODO: finish creating deletion. 
                         Console.WriteLine("Delete video");
-                        Console.ReadLine();
                         Console.Write("write the id of the video you wish to delete:");
+                        while (!int.TryParse(Console.ReadLine(), out idSelection))
+                        {
+                            Console.WriteLine("You need to select an id");
 
+                        }
+
+                        Console.WriteLine(_videoService.DeleteVideo(idSelection)
+                            ? "video was deleted successfully"
+                            : "video could not be deleted or the wrong id was typed");
+                        Console.ReadLine();
 
                         break;
                     case 5:
                         Console.WriteLine("Edit video");
-                        Console.ReadLine();
+                        Console.Write("write the id of the video you wish to edit:");
+                        while (!int.TryParse(Console.ReadLine(), out idSelection))
+                        {
+                            Console.WriteLine("You need to select an id");
+
+                        }
+
+                        Video selectedVideo;
+                        selectedVideo = _videoService.GetVideoById(idSelection);
+
+
+                        if (selectedVideo == null)
+                        {
+                            Console.WriteLine("could not find video");
+                            Console.ReadLine();
+                        }
+                        else
+                        {
+
+
+                            Console.WriteLine(_videoService.GetVideoById(idSelection));
+                            Console.ReadLine();
+                            Console.WriteLine("Select what part of the video you want to edit");
+
+                            string[] updateMenuItems =
+                            {
+                                "Edit Title",
+                                "Edit ReleaseDate",
+                                "Edit Storyline",
+                                "Edit Genre",
+                                "Exit"
+                            };
+                            var editSelection = 0;
+
+                            while (editSelection != 5)
+                            {
+                                
+
+                                editSelection = ShowMenu(updateMenuItems);
+                                //int editIdSelection;
+                                Console.ReadLine();
+
+                                
+                                switch (editSelection)
+                                {
+                                        
+
+                                    case 1:
+                                        string editTitle;
+                                        Console.WriteLine("Edit Title");
+                                        Console.Write("write new title:");
+                                        editTitle = Console.ReadLine();
+
+                                        while (editTitle == null || editTitle.Length <= 0)
+                                        {
+                                            Console.Write("title has to have a length higher then 0:");
+                                            editTitle = Console.ReadLine();
+                                        }
+
+                                        editedVideo = selectedVideo;
+                                        editedVideo.Title = editTitle;
+
+                                        if (_videoService.EditVideo(editedVideo) != null)
+                                        {
+                                            Console.WriteLine("the update was successful");
+                                            Console.WriteLine(_videoService.GetVideoById(idSelection)); 
+                                            Console.ReadLine();
+
+                                        }
+                                        else
+                                        {
+                                            Console.Write("the update was unsuccessful");
+                                            Console.ReadLine();
+                                        }
+
+                                        break;
+
+                                    case 2:
+                                        DateTime editReleaseDate;
+                                        Console.WriteLine("Edit releasedate");
+
+                                        Console.WriteLine("Enter release date, day/month/year");
+                                        while (!DateTime.TryParse(Console.ReadLine(), out editReleaseDate))
+                                        {
+                                            Console.WriteLine("You need to select a valid date");
+
+                                        }
+
+
+                                        editedVideo = selectedVideo;
+                                        editedVideo.ReleaseDate = editReleaseDate;
+
+                                        if (_videoService.EditVideo(editedVideo) != null)
+                                        {
+                                            Console.WriteLine("the update was successful");
+                                            Console.WriteLine(_videoService.GetVideoById(idSelection)); 
+                                            Console.ReadLine();
+
+                                        }
+                                        else
+                                        {
+                                            Console.Write("the update was unsuccessful"); 
+                                            Console.ReadLine();
+                                        }
+
+                                        break;
+
+                                    case 3:
+                                        string editStoryline;
+                                        Console.WriteLine("Edit Storyline");
+                                        Console.Write("write new Storyline:");
+                                        editStoryline = Console.ReadLine();
+
+                                        while (editStoryline == null || editStoryline.Length <= 0)
+                                        {
+                                            Console.Write("the storyline has to have a length higher then 0:");
+                                            editStoryline = Console.ReadLine();
+                                        }
+
+                                        editedVideo = selectedVideo;
+                                        editedVideo.Storyline = editStoryline;
+
+                                        if (_videoService.EditVideo(editedVideo) != null)
+                                        {
+                                            Console.WriteLine("the update was successful");
+                                            Console.WriteLine(_videoService.GetVideoById(idSelection));
+                                            Console.ReadLine();
+
+                                        }
+                                        else
+                                        {
+                                            Console.Write("the update was unsuccessful");
+                                            Console.ReadLine();
+                                        }
+
+                                        break;
+
+                                    case 4:
+                                        string editGenre;
+                                        Console.WriteLine("Edit Genre");
+                                        Console.Write("write new Genre:");
+                                        editGenre = Console.ReadLine();
+
+                                        while (editGenre == null || editGenre.Length <= 0)
+                                        {
+                                            Console.Write("the genre has to have a length higher then 0:");
+                                            editGenre = Console.ReadLine();
+                                        }
+
+                                        editedVideo = selectedVideo;
+                                        editedVideo.Genre = editGenre;
+
+                                        if (_videoService.EditVideo(editedVideo) != null)
+                                        {
+                                            Console.WriteLine("the update was successful");
+                                            Console.WriteLine(_videoService.GetVideoById(idSelection));
+                                            Console.ReadLine();
+
+                                        }
+                                        else
+                                        {
+                                            Console.Write("the update was unsuccessful");
+                                            Console.ReadLine();
+                                        }
+
+                                        break;
+
+
+
+                                }
+
+
+                             
+
+                            }
+
+                        }
+
                         break;
                     case 6:
                         Console.WriteLine("Exit");
                         Console.ReadLine();
                         break;
 
+
+
+
+
+
+
+
                 }
 
-
-
-
-
-
             }
-
         }
+
         private static int ShowMenu(string[] menuItems)
         {
             Console.Clear();
@@ -161,7 +351,7 @@ namespace VideoApp.UI
             }
 
             int selection;
-            while (!int.TryParse(Console.ReadLine(), out selection) || selection < 1 || selection > 6)
+            while (!int.TryParse(Console.ReadLine(), out selection) || selection < 1 || selection > menuItems.Length)
             {
                 Console.WriteLine("You need to select a menu item");
 

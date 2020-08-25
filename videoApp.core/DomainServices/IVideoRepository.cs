@@ -9,7 +9,11 @@ namespace VideoApp.core.DomainServices
    {
        public Video AddVideo(Video video);
 
+       public Video EditVideo(Video video,int index);
+
        public List<Video> GetVideos();
+
+       public void InitData();
 
    }
 }

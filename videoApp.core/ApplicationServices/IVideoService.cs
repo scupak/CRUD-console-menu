@@ -7,9 +7,17 @@ namespace VideoApp.core.ApplicationServices
 {
     public interface IVideoService
     {
+        public Video GetVideoById(int id);
+
         public List<Video> GetVideos();
 
         public Video CreateVideo(Video video);
+
+        public bool DeleteVideo(int id);
+
+        public Video EditVideo(Video video);
+
+
 
     }
 }

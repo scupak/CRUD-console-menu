@@ -12,6 +12,7 @@ namespace VideoApp.UI
         static void Main(string[] args)
         {
             IVideoRepository videoRepository = new VideoTable();
+            videoRepository.InitData();
             IVideoService videoService = new VideoService(videoRepository);
             Printer print = new Printer(videoService);
             print.PrintMenu();
